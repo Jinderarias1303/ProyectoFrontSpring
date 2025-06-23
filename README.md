@@ -71,5 +71,3 @@ Este repositorio contiene páginas HTML separadas para cada módulo:
 * Interfaz responsive sin frameworks.
 * Código documentado con comentarios.
 * README explicativo con pasos de conexión.
-
-
