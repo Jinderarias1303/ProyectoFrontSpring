@@ -1,119 +1,349 @@
+/* Reset y configuración base */
+* {
+  box-sizing: border-box;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
 .login-outer {
   min-height: 100vh;
   width: 100vw;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3rem;
-}
-
-
-
-.login-container {
   background: linear-gradient(135deg, #1a5f7a 0%, #2c3e50 100%);
-  padding: 3rem;
-}
-
-.login-card {
-  background: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
   padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
 }
 
+/* Efectos de fondo animados */
+.login-outer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(26, 95, 122, 0.4) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(44, 62, 80, 0.4) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(26, 95, 122, 0.3) 0%, transparent 50%);
+  animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-20px) rotate(1deg); }
+  66% { transform: translateY(10px) rotate(-1deg); }
+}
+
+/* Contenedor principal */
+.login-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* Wrapper de formularios */
+.form-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Tarjetas de login y registro */
+.login-card, .register-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 3rem;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.login-card::before, .register-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+  pointer-events: none;
+}
+
+.login-card:hover::before, .register-card:hover::before {
+  left: 100%;
+}
+
+.login-card:hover, .register-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 
+    0 35px 70px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+/* Header de las tarjetas */
 .login-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
+  position: relative;
 }
 
 .login-header h1 {
-  color: #1a5f7a;
-  font-size: 1.8rem;
+  background: linear-gradient(135deg, #1a5f7a 0%, #2c3e50 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 2.5rem;
+  font-weight: 700;
   margin-bottom: 0.5rem;
+  letter-spacing: -1px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .login-header p {
-  color: #666;
+  color: #6c757d;
   font-size: 1.1rem;
+  font-weight: 400;
+  margin: 0;
+  opacity: 0.8;
 }
 
+/* Formularios */
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.8rem;
 }
 
 .form-group {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.8rem;
 }
 
 .form-group label {
-  color: #333;
-  font-weight: 500;
+  color: #495057;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-left: 0.5rem;
+  transition: all 0.3s ease;
 }
 
 .form-group input {
-  padding: 0.8rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 1.2rem 1.5rem;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
   font-size: 1rem;
-  transition: border-color 0.3s ease;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
 .form-group input:focus {
   outline: none;
   border-color: #1a5f7a;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 0 0 4px rgba(26, 95, 122, 0.1),
+    0 8px 25px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
+.form-group input:focus + label {
+  color: #1a5f7a;
+  transform: translateY(-2px);
+}
+
+/* Botones */
 .login-button {
-  background-color: #1a5f7a;
+  background: linear-gradient(135deg, #1a5f7a 0%, #2c3e50 100%);
   color: white;
-  padding: 1rem;
+  padding: 1.2rem 2rem;
   border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  font-weight: 500;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 8px 25px rgba(26, 95, 122, 0.3);
+}
+
+.login-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.login-button:hover::before {
+  left: 100%;
 }
 
 .login-button:hover {
-  background-color: #154b61;
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(26, 95, 122, 0.4);
+  background: linear-gradient(135deg, #154b61 0%, #1e2a38 100%);
+}
+
+.login-button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(26, 95, 122, 0.3);
+}
+
+.login-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Mensajes de error */
+.error-message {
+  background: linear-gradient(135deg, #e63946 0%, #c1121f 100%);
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 500;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(230, 57, 70, 0.3);
+  animation: slideIn 0.3s ease-out;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .form-wrapper {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .login-card, .register-card {
+    padding: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .login-outer {
+    padding: 1rem;
+  }
+  
+  .login-card, .register-card {
+    padding: 2rem;
+    border-radius: 15px;
+  }
+  
+  .login-header h1 {
+    font-size: 2rem;
+  }
+  
+  .form-group input {
+    padding: 1rem 1.2rem;
+  }
+  
+  .login-button {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+  }
 }
 
 @media (max-width: 480px) {
-  .login-card {
+  .login-card, .register-card {
     padding: 1.5rem;
   }
-
+  
   .login-header h1 {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
+  }
+  
+  .login-header p {
+    font-size: 1rem;
+  }
+  
+  .form-group input {
+    padding: 0.9rem 1rem;
   }
 }
 
-.form-wrapper {
-  display: flex;
-  gap: 2rem;
-  align-items: stretch;
-  justify-content: center;
+/* Animaciones adicionales */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-card {
+  animation: fadeInUp 0.6s ease-out;
 }
 
 .register-card {
-  border-left: 2px solid #f0f0f0;
+  animation: fadeInUp 0.6s ease-out 0.2s both;
 }
 
-@media (max-width: 900px) {
-  .form-wrapper {
-    flex-direction: column;
-    gap: 2rem;
-    align-items: center;
-  }
-  .register-card {
-    border-left: none;
-    border-top: 2px solid #f0f0f0;
-  }
+/* Efectos de partículas flotantes */
+.login-outer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: sparkle 15s linear infinite;
+}
+
+@keyframes sparkle {
+  0% { transform: translateY(0px); }
+  100% { transform: translateY(-50px); }
 } 

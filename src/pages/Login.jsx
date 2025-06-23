@@ -59,8 +59,8 @@ function Login() {
         <div className="form-wrapper">
           <div className="login-card">
             <div className="login-header">
-              <h1>Atunes del Pacífico S.A.</h1>
-              <p>Sistema de Gestión</p>
+              <h1>Iniciar Sesión</h1>
+              <p>Accede a tu cuenta</p>
             </div>
             <form onSubmit={handleSubmit} className="login-form">
               {error && (
@@ -101,7 +101,7 @@ function Login() {
               </button>
             </form>
           </div>
-          <div className="login-card register-card">
+          <div className="register-card">
             <div className="login-header">
               <h1>Registro de Usuario</h1>
               <p>Crea tu cuenta</p>
