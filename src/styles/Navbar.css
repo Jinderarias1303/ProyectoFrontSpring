@@ -42,6 +42,22 @@
   color: #e63946;
 }
 
+.nav-item button {
+  background: none;
+  border: none;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  padding: 0;
+}
+
+.nav-item button:hover {
+  color: #e63946;
+}
+
 .navbar-end {
   display: flex;
   align-items: center;

@@ -69,14 +69,6 @@ function AppContent() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/inventario"
-            element={
-              <ProtectedRoute>
-                <div>Reportes (Próximamente)</div>
-              </ProtectedRoute>
-            }
-          />
         </Routes>
       </main>
     </div>

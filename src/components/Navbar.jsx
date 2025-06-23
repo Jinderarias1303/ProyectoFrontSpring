@@ -13,6 +13,11 @@ function Navbar() {
     navigate('/login');
   };
 
+  const handleNavigation = (path) => {
+    navigate(path);
+    setIsMenuOpen(false); // Cerrar el menú móvil después de navegar
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-brand">
@@ -22,19 +27,19 @@ function Navbar() {
       <div className={`navbar-menu ${isMenuOpen ? 'active' : ''}`}>
         <ul className="navbar-nav">
           <li className="nav-item">
-            <a href="/dashboard">Inicio</a>
+            <button onClick={() => handleNavigation('/')}>Inicio</button>
           </li>
           <li className="nav-item">
-            <a href="/produccion">Producción</a>
+            <button onClick={() => handleNavigation('/produccion')}>Producción</button>
           </li>
           <li className="nav-item">
-            <a href="/pedidos">Pedidos</a>
+            <button onClick={() => handleNavigation('/pedidos')}>Pedidos</button>
           </li>
           <li className="nav-item">
-            <a href="/clientes">Clientes</a>
+            <button onClick={() => handleNavigation('/clientes')}>Clientes</button>
           </li>
           <li className="nav-item">
-            <a href="/inventario">Inventario</a>
+            <button onClick={() => handleNavigation('/inventario')}>Inventario</button>
           </li>
         </ul>
       </div>
