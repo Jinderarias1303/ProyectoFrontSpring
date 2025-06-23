@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
           id: 1,
           username: credentials.username,
           role: 'ADMIN', // Esto vendrá del backend
-          name: 'Usuario Demo'
+          name: credentials.username
         }
       };
 
@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
           id: 2,
           username: newUser.username,
           role: 'USER',
-          name: newUser.name || newUser.username
+          name: newUser.username
         }
       };
       localStorage.setItem('token', response.token);

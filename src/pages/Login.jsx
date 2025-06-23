@@ -12,8 +12,7 @@ function Login() {
   });
   const [registerData, setRegisterData] = useState({
     username: '',
-    password: '',
-    name: ''
+    password: ''
   });
   const [registerError, setRegisterError] = useState(null);
 
@@ -113,18 +112,7 @@ function Login() {
                   {registerError}
                 </div>
               )}
-              <div className="form-group">
-                <label htmlFor="register-name">Nombre</label>
-                <input
-                  type="text"
-                  id="register-name"
-                  name="name"
-                  value={registerData.name}
-                  onChange={handleRegisterChange}
-                  required
-                  disabled={loading}
-                />
-              </div>
+             
               <div className="form-group">
                 <label htmlFor="register-username">Usuario</label>
                 <input

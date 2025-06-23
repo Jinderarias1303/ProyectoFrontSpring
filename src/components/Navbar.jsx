@@ -46,7 +46,7 @@ function Navbar() {
 
       <div className="navbar-end">
         <div className="user-menu">
-          <span className="user-name">{user?.name || 'Usuario'}</span>
+          <span className="user-name">{user?.username || 'Usuario'}</span>
           <button className="logout-btn" onClick={handleLogout}>
             Cerrar Sesión
           </button>
