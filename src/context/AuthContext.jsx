@@ -1,38 +1,98 @@
-import { createContext, useState, useContext } from 'react';
+// src/context/AuthContext.jsx
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext(null);
 
-export const AuthProvider = ({ children }) => {
+// ** URLs COMPLETAS DE TUS ENDPOINTS **
+// Si tu backend usa estas rutas específicas para login y register
+// y corren en localhost:8080
+const LOGIN_ENDPOINT = 'http://localhost:8080/api/auth/login';    // <--- ¡VERIFICA ESTA URL EN TU BACKEND!
+const REGISTER_ENDPOINT = 'http://localhost:8080/api/auth/register'; // <--- ¡VERIFICA ESTA URL EN TU BACKEND!
+
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const login = async (credentials) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Aquí irá la llamada a la API
-      // Por ahora simulamos una respuesta exitosa
-      const response = {
-        token: 'dummy-token',
-        user: {
-          id: 1,
-          username: credentials.username,
-          role: 'ADMIN', // Esto vendrá del backend
-          name: credentials.username
-        }
-      };
+  // Helper para hacer peticiones fetch con headers configurados
+  const fetchApi = async (url, options = {}) => {
+    const token = localStorage.getItem('token');
+    const headers = {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    };
 
-      // Guardar el token en localStorage
-      localStorage.setItem('token', response.token);
-      
-      // Actualizar el estado
-      setUser(response.user);
-      
-      return response;
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(url, {
+      ...options,
+      headers,
+    });
+
+    if (!response.ok) {
+      let errorData = null;
+      try {
+        errorData = await response.json();
+      } catch (parseError) {
+        errorData = { message: response.statusText || 'Error desconocido del servidor.' };
+      }
+      const error = new Error(errorData.message || 'Error en la petición.');
+      error.response = {
+        status: response.status,
+        data: errorData,
+      };
+      throw error;
+    }
+
+    return response.json();
+  };
+
+  useEffect(() => {
+    const loadUserFromStorage = async () => {
+      const storedToken = localStorage.getItem('token');
+      const storedUser = localStorage.getItem('user');
+
+      if (storedToken && storedUser) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          setUser(parsedUser);
+        } catch (e) {
+          console.error("Error al parsear los datos del usuario almacenados:", e);
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          setUser(null);
+        }
+      }
+      setLoading(false);
+    };
+    loadUserFromStorage();
+  }, []);
+
+  const login = async (credentials) => {
+    setLoading(true);
+    setError(null);
+    try {
+      // ** Usa directamente la URL completa para el login **
+      const responseData = await fetchApi(LOGIN_ENDPOINT, {
+        method: 'POST',
+        body: JSON.stringify(credentials),
+      });
+
+      const { token, user: userData } = responseData; // Asegúrate de que tu backend devuelve 'token' y 'user'
+
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(userData));
+
+      setUser(userData);
+      return responseData;
     } catch (err) {
-      setError(err.message || 'Error al iniciar sesión');
+      console.error("Error al iniciar sesión:", err);
+      const errorMessage = err.response && err.response.data && err.response.data.message
+                           ? err.response.data.message
+                           : 'Error al iniciar sesión. Verifica tus credenciales y la conexión al servidor.';
+      setError(errorMessage);
       throw err;
     } finally {
       setLoading(false);
@@ -40,24 +100,28 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (newUser) => {
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-      setError(null);
-      // Simulación de registro exitoso
-      const response = {
-        token: 'dummy-token',
-        user: {
-          id: 2,
-          username: newUser.username,
-          role: 'USER',
-          name: newUser.username
-        }
-      };
-      localStorage.setItem('token', response.token);
-      setUser(response.user);
-      return response;
+      // ** Usa directamente la URL completa para el registro **
+      const responseData = await fetchApi(REGISTER_ENDPOINT, {
+        method: 'POST',
+        body: JSON.stringify(newUser),
+      });
+
+      const { token, user: userData } = responseData; // Asegúrate de que tu backend devuelve 'token' y 'user'
+
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(userData));
+
+      setUser(userData);
+      return responseData;
     } catch (err) {
-      setError(err.message || 'Error al registrar usuario');
+      console.error("Error al registrar usuario:", err);
+      const errorMessage = err.response && err.response.data && err.response.data.message
+                           ? err.response.data.message
+                           : 'Error al registrar usuario. Intenta con otro nombre de usuario o contacta al administrador.';
+      setError(errorMessage);
       throw err;
     } finally {
       setLoading(false);
@@ -66,18 +130,16 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setUser(null);
   };
 
-  const checkAuth = () => {
+  const checkAuth = async () => {
     const token = localStorage.getItem('token');
-    if (token) {
-      // Aquí iría la validación del token con el backend
-      // Por ahora solo verificamos que exista
-      return true;
-    }
-    return false;
+    return !!token;
   };
+
+  const isAuthenticated = !!user;
 
   const value = {
     user,
@@ -87,15 +149,21 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     checkAuth,
-    isAuthenticated: !!user
+    isAuthenticated,
   };
 
   return (
     <AuthContext.Provider value={value}>
-      {children}
+      {loading && !isAuthenticated ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontSize: '24px' }}>
+          Cargando autenticación...
+        </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
-};
+}
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -103,4 +171,4 @@ export const useAuth = () => {
     throw new Error('useAuth debe ser usado dentro de un AuthProvider');
   }
   return context;
-}; 
+};
