@@ -36,14 +36,16 @@ export function AuthProvider({ children }) {
       try {
         errorData = await response.json();
       } catch (parseError) {
+        // Si no se puede parsear como JSON, usar el estado y texto del error HTTP
         errorData = { message: response.statusText || 'Error desconocido del servidor.' };
       }
-      const error = new Error(errorData.message || 'Error en la petición.');
-      error.response = {
+      // Crear un objeto de error más completo
+      const customError = new Error(errorData.message || 'Error en la petición.');
+      customError.response = {
         status: response.status,
         data: errorData,
       };
-      throw error;
+      throw customError; // Lanzar el error personalizado
     }
 
     return response.json();
@@ -74,7 +76,7 @@ export function AuthProvider({ children }) {
     setLoading(true);
     setError(null);
     try {
-      // ** Usa directamente la URL completa para el login **
+      // Usa directamente la URL completa para el login
       const responseData = await fetchApi(LOGIN_ENDPOINT, {
         method: 'POST',
         body: JSON.stringify(credentials),
@@ -89,11 +91,18 @@ export function AuthProvider({ children }) {
       return responseData;
     } catch (err) {
       console.error("Error al iniciar sesión:", err);
-      const errorMessage = err.response && err.response.data && err.response.data.message
-                           ? err.response.data.message
-                           : 'Error al iniciar sesión. Verifica tus credenciales y la conexión al servidor.';
+      let errorMessage = 'Error al iniciar sesión. Verifica tus credenciales y la conexión al servidor.';
+
+      // ** CORRECCIÓN: Acceso seguro a las propiedades del error **
+      if (err.response && err.response.data && err.response.data.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message) {
+        // Para errores de red o errores genéricos donde 'response' no está definido
+        errorMessage = err.message;
+      }
+
       setError(errorMessage);
-      throw err;
+      throw err; // Re-lanzar el error para que los componentes puedan manejarlo si es necesario
     } finally {
       setLoading(false);
     }
@@ -103,7 +112,7 @@ export function AuthProvider({ children }) {
     setLoading(true);
     setError(null);
     try {
-      // ** Usa directamente la URL completa para el registro **
+      // Usa directamente la URL completa para el registro
       const responseData = await fetchApi(REGISTER_ENDPOINT, {
         method: 'POST',
         body: JSON.stringify(newUser),
@@ -118,9 +127,15 @@ export function AuthProvider({ children }) {
       return responseData;
     } catch (err) {
       console.error("Error al registrar usuario:", err);
-      const errorMessage = err.response && err.response.data && err.response.data.message
-                           ? err.response.data.message
-                           : 'Error al registrar usuario. Intenta con otro nombre de usuario o contacta al administrador.';
+      let errorMessage = 'Error al registrar usuario. Intenta con otro nombre de usuario o contacta al administrador.';
+
+      // ** CORRECCIÓN: Acceso seguro a las propiedades del error **
+      if (err.response && err.response.data && err.response.data.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message) {
+        // Para errores de red o errores genéricos donde 'response' no está definido
+        errorMessage = err.message;
+      }
       setError(errorMessage);
       throw err;
     } finally {
