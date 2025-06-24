@@ -12,7 +12,8 @@ function Login() {
   });
   const [registerData, setRegisterData] = useState({
     username: '',
-    password: ''
+    password: '',
+    role: 'cliente', // Valor por defecto
   });
   const [registerError, setRegisterError] = useState(null);
 
@@ -136,6 +137,21 @@ function Login() {
                   required
                   disabled={loading}
                 />
+              </div>
+              <div className="form-group">
+                <label htmlFor="register-role">Rol</label>
+                <select
+                  id="register-role"
+                  name="role"
+                  value={registerData.role}
+                  onChange={handleRegisterChange}
+                  required
+                  disabled={loading}
+                >
+                  <option value="cliente">Cliente</option>
+                  <option value="administrador">Administrador</option>
+                  <option value="operador">Operador</option>
+                </select>
               </div>
               <button 
                 type="submit" 
